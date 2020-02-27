@@ -1,9 +1,9 @@
-import { mapInit } from './js/ymaps';
+import { initMap } from './js/ymaps';
 import './css/styles.css';
 import SomIng from './images/close.png';
 // import render from './templates/friends.hbs';
 
-window.onload = mapInit();
+window.onload = initMap();
 
 // const map = document.querySelector('#map');
 //
