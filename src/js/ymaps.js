@@ -27,7 +27,7 @@ function initMap() {
             }
 
             function createPlacemark(coords, i = 0) {
-                return new ymaps.Placemark(coords, {
+                let p = new ymaps.Placemark(coords, {
                     // Defining the data that will be displayed in the balloon.
                     balloonContentHeader: 'The title of the placemark #' + (i + 1),
                     balloonContentBody: 'Information about the placemark #' + (i + 1),
@@ -35,6 +35,9 @@ function initMap() {
                 }, {
                     balloonContentLayout: customBalloonContentLayout
                 });
+                p.events.add('mousedown', e =>{currentCoords= e.get('coords')});
+                // ymaps.Events.observe(p , p.Events.Click, e =>{alert(e)})
+                return p
             }
 
             // Creating a custom layout with information about the selected geo object.
@@ -56,10 +59,10 @@ function initMap() {
 
             jQuery(document).on('click', '#addBtn', function (e) {
                 let p = createPlacemark(currentCoords);
-                console.log(p);
+                // console.log(p);
                 // clusterer.add([p]);
                 clusterer.add([p]);
-                alert(`your cords ${currentCoords}`)
+                // alert(`your cords ${currentCoords}`)
             });
 
             myMap.events.add('click', e => {
@@ -67,8 +70,8 @@ function initMap() {
                     myMap.balloon.close();
                 } else {
                     currentCoords = e.get('coords');
-                    let p = createPlacemark(currentCoords);
-                    clusterer.add([p]);
+                    // let p = createPlacemark(currentCoords);
+                    // clusterer.add([p]);
                     // let balloon = new ymaps.Balloon(myMap);
 
                     myMap.balloon.open(
