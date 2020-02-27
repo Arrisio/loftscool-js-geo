@@ -1,6 +1,6 @@
 import { initMap } from './js/ymaps';
 import './css/styles.css';
-import SomIng from './images/close.png';
+// import SomIng from './images/close.png';
 // import render from './templates/friends.hbs';
 
 window.onload = initMap();
