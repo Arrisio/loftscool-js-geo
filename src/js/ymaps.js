@@ -19,7 +19,7 @@ function mapInit() {
             balloonContentLayout: BalloonContentLayout
         });
 
-        const save = document.querySelector('#save');
+        const save = document.querySelector('#add-button');
         console.log('Кнопка SAVE:');
         console.log(save);
 
