@@ -4,44 +4,18 @@ function initMap() {
             myMap = new ymaps.Map('map', {
                 center: mapCenter,
                 zoom: 10,
-            }, {
-                options: {
-                    balloonContentLayout: customBalloonContentLayout
-                }
             }),
             placemarks = [];
 
-        // #####
-        let currentCoords;
-
-        function getAddress(coords) {
-            let myGeocoder = ymaps.geocode(coords, {
-                results: 1
-            }).then(function (res) {
-                let firstGeoObject = res.geoObjects.get(0);
-                let coords = firstGeoObject.geometry.getCoordinates();
-                let addr = res.geoObjects.get(0).getAddressLine();
-                console.log(addr);
-            })
-        }
-
-        function createPlacemark(coords, i = 0) {
-            let p = new ymaps.Placemark(coords, {
-                // Defining the data that will be displayed in the balloon.
-                balloonContentHeader: 'The title of the placemark #' + (i + 1),
-                balloonContentBody: 'Information about the placemark #' + (i + 1),
-                placemarkId: 10000
-            }, {
-                balloonContentLayout: customBalloonContentLayout
-            });
-            p.events.add('mousedown', e => {
-                currentCoords = e.get('coords')
-            });
-            // ymaps.Events.observe(p , p.Events.Click, e =>{alert(e)})
-            return p
-        }
-
-        // Creating a custom layout with information about the selected geo object.
+        let customBalloonLayout = ymaps.templateLayoutFactory.createClass([
+                '<div class="modal">',
+                '<div class="">{{ address }}</div>',
+                // '<div>{{ properties.address }}</div>',
+                '$[[options.contentLayout observeSize minWidth=235 maxWidth=235 maxHeight=350]]',
+                '</div>',
+                '</div>'
+            ].join('')
+        );
         var customBalloonContentLayout = ymaps.templateLayoutFactory.createClass([
             '<ul class=list>',
             // Outputting a list of all geo objects in the cycle.
@@ -50,8 +24,47 @@ function initMap() {
             '{% endfor %}',
             '</ul>',
             '<div>{{ properties.placemarkId }}</div>',
-            '<button id ="addBtn">BT</button>'
+            '<div>{{ properties.address }}</div>',
+
+            '<button id ="addBtn">BT</button>',
+            '</div>'
         ].join(''));
+        // #####
+        let currentCoords,
+            currentAddress = 'NNA';
+
+        function getAddress(coords) {
+            ymaps.geocode(coords, {
+                results: 1
+            }).then(function (res) {
+                let firstGeoObject = res.geoObjects.get(0);
+                let coords = firstGeoObject.geometry.getCoordinates();
+                currentAddress = res.geoObjects.get(0).getAddressLine()
+                return currentAddress;
+            })
+        }
+
+        function createPlacemark(coords, i = 0) {
+            let p = new ymaps.Placemark(coords, {
+                // Defining the data that will be displayed in the balloon.
+                balloonContentHeader: 'The title of the placemark #' + currentAddress,
+                balloonContentBody: 'Information about the placemark #' + (i + 1),
+                placemarkId: 10000,
+                address: currentAddress,
+                object: 'Центр современного искусства'
+            }, {
+                balloonContentLayout: customBalloonContentLayout,
+                balloonLayout: customBalloonLayout
+            });
+            p.events.add('mousedown', e => {
+                currentCoords = e.get('coords')
+            });
+            // console.log(p)
+            // ymaps.Events.observe(p , p.Events.Click, e =>{alert(e)})
+            return p
+        }
+
+        // Creating a custom layout with information about the selected geo object.
 
         // jQuery(document).on('click', 'a.list_item', function () {
         //     var selectedPlacemark = placemarks[jQuery(this).data().placemarkid];
@@ -71,18 +84,25 @@ function initMap() {
                 myMap.balloon.close();
             } else {
                 currentCoords = e.get('coords');
-                // let p = createPlacemark(currentCoords);
-                // clusterer.add([p]);
-                // let balloon = new ymaps.Balloon(myMap);
-
-                myMap.balloon.open(
-                    currentCoords,
-                    'Содержимое балуна', {
-                        contentLayout: customBalloonContentLayout
+                // getAddress(currentCoords)
+                ymaps.geocode(currentCoords, {
+                    results: 1
+                })
+                    .then(res => res.geoObjects.get(0).getAddressLine())
+                    .then(res => {
+                        currentAddress = res;
+                        myMap.balloon.open(
+                            currentCoords,
+                            {
+                                properties: {address: res}
+                            }, {
+                                contentLayout: customBalloonContentLayout,
+                                layout: customBalloonLayout
+                            });
                     });
-
             }
         });
+
         myMap.balloon.events.add('open', function (event) {
             document.getElementById('addBtn').addEventListener('click', () => {
                 let p = createPlacemark(currentCoords);
