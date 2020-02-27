@@ -5,10 +5,16 @@ function initMap() {
                 myMap = new ymaps.Map('map', {
                     center: mapCenter,
                     zoom: 10,
+                }, {
+                    options: {
+                        balloonContentLayout: customBalloonContentLayout
+                    }
                 }),
                 placemarks = [];
 
             // #####
+            let currentCoords;
+
             function getAddress(coords) {
                 let myGeocoder = ymaps.geocode(coords, {
                     results: 1
@@ -19,17 +25,17 @@ function initMap() {
                     console.log(addr);
                 })
             }
-            function createPlacemark(coords) {
+
+            function createPlacemark(coords, i = 0) {
                 return new ymaps.Placemark(coords, {
                     // Defining the data that will be displayed in the balloon.
                     balloonContentHeader: 'The title of the placemark #' + (i + 1),
                     balloonContentBody: 'Information about the placemark #' + (i + 1),
-                    placemarkId: i
+                    placemarkId: 10000
                 }, {
                     balloonContentLayout: customBalloonContentLayout
                 });
             }
-
 
             // Creating a custom layout with information about the selected geo object.
             var customBalloonContentLayout = ymaps.templateLayoutFactory.createClass([
@@ -48,20 +54,28 @@ function initMap() {
                 alert(selectedPlacemark.properties.get('balloonContentBody'));
             });
 
-            // jQuery(document).on('click', '#addBtn', function (e) {
-            //     console.log(1)
-            // });
+            jQuery(document).on('click', '#addBtn', function (e) {
+                let p = createPlacemark(currentCoords);
+                console.log(p);
+                // clusterer.add([p]);
+                clusterer.add([p]);
+                alert(`your cords ${currentCoords}`)
+            });
 
             myMap.events.add('click', e => {
                 if (myMap.balloon.isOpen()) {
                     myMap.balloon.close();
                 } else {
-                    const coords = e.get('coords');
-                    // let address = getAddress(coords);
-                    console.log(coords);
-                    // let p = createPlacemark(coords);
-                    // clusterer.add([p]);
-                    myMap.balloon.open(coords);
+                    currentCoords = e.get('coords');
+                    let p = createPlacemark(currentCoords);
+                    clusterer.add([p]);
+                    // let balloon = new ymaps.Balloon(myMap);
+
+                    myMap.balloon.open(
+                        currentCoords,
+                        'Содержимое балуна', {
+                            contentLayout: customBalloonContentLayout
+                        });
                 }
             });
 
@@ -75,15 +89,7 @@ function initMap() {
 
             // Populating the cluster with geo objects with random positions.
             for (var i = 0, l = 100; i < l; i++) {
-                var placemark = new ymaps.Placemark(getRandomPosition(), {
-                    // Defining the data that will be displayed in the balloon.
-                    balloonContentHeader: 'The title of the placemark #' + (i + 1),
-                    balloonContentBody: 'Information about the placemark #' + (i + 1),
-                    placemarkId: i
-                }, {
-                    balloonContentLayout: customBalloonContentLayout
-                });
-                placemarks.push(placemark);
+                placemarks.push(createPlacemark(getRandomPosition()));
             }
 
             clusterer.add(placemarks);
@@ -100,7 +106,6 @@ function initMap() {
         });
     });
 }
-
 
 // console.log(a);
 
