@@ -33,17 +33,9 @@ function initMap() {
             }
             feedback.innerHTML = template.build(data).text;
             feedbacks.appendChild(feedback);
-        };
-
-        function setAddress(coords) {
-            ymaps.geocode(coords, {
-                results: 1
-            }).then(res => {
-                currentAddress = res.geoObjects.get(0).getAddressLine();
-            })
         }
 
-        function createPlacemark(coords, userName = '', placeName = '', comment = 'a') {
+        function createPlacemark(coords, userName = '', placeName = '', comment = '') {
             let placemark = new ymaps.Placemark(coords, {
                 balloonContentHeader: `<b>${placeName}</b>`,
                 balloonContentBody: `<div><a href="https://www.w3schools.com">${currentAddress}</a></div><div>${comment}</div>`,
@@ -58,6 +50,7 @@ function initMap() {
             placemark.events.add('open', e => {
                 currentCoords = e.get('coords')
             });
+
             return placemark
         }
 
@@ -87,14 +80,14 @@ function initMap() {
         myMap.balloon.events.add('open', () => {
             document.getElementById('addBtn').addEventListener('click', () => {
                 let feedbackForm = document.getElementById('feedbackForm');
-                let p = createPlacemark(
+                let placemark = createPlacemark(
                     currentCoords,
                     feedbackForm.userName.value,
                     feedbackForm.placeName.value,
                     feedbackForm.comment.value
                 );
 
-                clusterer.add([p]);
+                clusterer.add([placemark]);
                 addFeedbackToModal();
                 feedbackForm.reset();
             });
