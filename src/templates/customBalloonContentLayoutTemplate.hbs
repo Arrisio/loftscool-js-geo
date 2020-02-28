@@ -1,0 +1,12 @@
+{%if properties.comment!=null%}
+<div>
+  <div>
+    <span>{%if properties.userName!=null%}$[properties.userName]{% else %}{% endif %} </span>
+    <span>{%if properties.placeName!=null%}$[properties.placeName]{% else %}{% endif %} </span>
+  </div>
+  <div class="modal__comments">$[properties.comment]</div>
+</div>
+<hr class="modal__line">
+{% else %}
+  <div id="feedbackPlaceholder">Отзыва пока нет.</div>
+{% endif %}

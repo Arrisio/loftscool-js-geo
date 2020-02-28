@@ -1,28 +1,4 @@
 import { initMap } from './js/ymaps';
 import './css/styles.css';
-// import SomIng from './images/close.png';
-// import render from './templates/friends.hbs';
 
 window.onload = initMap();
-
-// const map = document.querySelector('#map');
-//
-// const list = [
-//   {
-//     name: 'Иван', last_name: 'Иванов'
-//   },
-//   {
-//     name: 'Олег', last_name: 'Петров'
-//   },
-//   {
-//     name: 'Игорь', last_name: 'Авдеев'
-//   },
-//   {
-//     name: 'Денис', last_name: 'Иванов'
-//   },
-//   {
-//     name: 'Артем', last_name: 'Картушин'
-//   },
-// ];
-
-// map.innerHTML = render ({ list })

@@ -1,0 +1,16 @@
+<div class="modal">
+  <div class="modal__header">
+    <div class="modal__address" id="modalAddress"><img src="img/small_map.png" alt="Адресс марки" class="img__map"></div>
+    <button class="modal__close balloon__close-button"><img src="img/close.png" alt="Закрыть отзыв" class="img__close"></button>
+  </div>
+  <div id="feedbacks">
+    $[[options.contentLayout]]
+  </div>
+  <h3 class="form__title"> Ваш отзыв </h3>
+  <form class="modal__form" id="feedbackForm">
+    <input type="text" class="form__name" placeholder="Ваше имя" name="userName">
+    <input type="text" class="form__place" placeholder="Укажите место" name="placeName">
+    <textarea name="comment"  rows="5" class="form__text" placeholder="Поделитесь впечатлениями" ></textarea>
+    <button type="button" class="form__btn" id ="addBtn">Добавить</button>
+  </form>
+</div>
